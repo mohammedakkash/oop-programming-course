@@ -72,3 +72,90 @@ namespace AssetManagementSystem
             return $"ID: {AssetId}, Name: {Name}, Purchased: {PurchaseDate.ToShortDateString()}";
         }
     }
+
+    //============================================================
+    // 3. INHERITANCE & POLYMORPHISM: Concrete Derived Classes
+    //============================================================
+
+    /// <summary>
+    /// Represents a specific type of asset: Laptop. Inherits from Asset.
+    /// </summary>
+    public class Laptop : Asset
+    {
+        public string CpuType { get; set; }
+        public int RamInGB { get; set; }
+
+        public Laptop(string name, DateTime purchaseDate, string cpuType, int ramInGB)
+            : base(name, purchaseDate) // Call the base class constructor.
+        {
+            this.CpuType = cpuType;
+            this.RamInGB = ramInGB;
+        }
+
+        // Overriding the abstract method to provide a specific implementation for Laptop.
+        public override string GetMaintenanceDetails()
+        {
+            return "Maintenance: Check battery health and update software annually.";
+        }
+
+        // Overriding the virtual method to add more specific details.
+        public override string GetAssetSummary()
+        {
+            return $"{base.GetAssetSummary()}, CPU: {CpuType}, RAM: {RamInGB}GB";
+        }
+    }
+
+    /// <summary>
+    /// Represents a specific type of asset: Monitor. Inherits from Asset.
+    /// </summary>
+    public class Monitor : Asset
+    {
+        public int ScreenSizeInches { get; set; }
+        public string Resolution { get; set; }
+
+        public Monitor(string name, DateTime purchaseDate, int screenSize, string resolution)
+            : base(name, purchaseDate)
+        {
+            this.ScreenSizeInches = screenSize;
+            this.Resolution = resolution;
+        }
+
+        // Overriding the abstract method.
+        public override string GetMaintenanceDetails()
+        {
+            return "Maintenance: Clean the screen and check for dead pixels every 6 months.";
+        }
+
+        // Overriding the virtual method.
+        public override string GetAssetSummary()
+        {
+            return $"{base.GetAssetSummary()}, Size: {ScreenSizeInches}\", Resolution: {Resolution}";
+        }
+    }
+
+    /// <summary>
+    /// Represents another specific type of asset: OfficeChair. Inherits from Asset.
+    /// </summary>
+    public class OfficeChair : Asset
+    {
+        public string Material { get; set; }
+
+        public OfficeChair(string name, DateTime purchaseDate, string material)
+            : base(name, purchaseDate)
+        {
+            this.Material = material;
+        }
+
+        // Overriding the abstract method.
+        public override string GetMaintenanceDetails()
+        {
+            return "Maintenance: Check mechanical parts and clean fabric quarterly.";
+        }
+
+        // Overriding the virtual method.
+        public override string GetAssetSummary()
+        {
+            return $"{base.GetAssetSummary()}, Material: {Material}";
+        }
+    }
+
