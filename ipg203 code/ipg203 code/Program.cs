@@ -159,3 +159,92 @@ namespace AssetManagementSystem
         }
     }
 
+    //============================================================
+    // 4. DELEGATES & EVENTS: The Asset Manager
+    //============================================================
+
+    /// <summary>
+    /// A delegate defines the signature for a method that can handle notifications.
+    /// </summary>
+    public delegate void AssetNotificationHandler(string message);
+
+    /// <summary>
+    /// Manages a collection of assets and demonstrates polymorphism and events.
+    /// </summary>
+    public class AssetManager
+    {
+        // The event that other classes can subscribe to.
+        public event AssetNotificationHandler AssetNearingEOL;
+
+        // A list to hold various types of assets, demonstrating polymorphism.
+        private readonly List<Asset> _assets;
+
+        public AssetManager()
+        {
+            _assets = new List<Asset>();
+        }
+
+        public void AddAsset(Asset asset)
+        {
+            if (asset != null)
+            {
+                _assets.Add(asset);
+                Console.WriteLine($"-> Added Asset: {asset.Name}");
+            }
+        }
+
+        /// <summary>
+        /// This method demonstrates polymorphism. It calls methods on each asset,
+        /// and the correct version of the method is executed at runtime based on the object's actual type.
+        /// </summary>
+        public void PrintAllAssetSummaries()
+        {
+            Console.WriteLine("\n--- All Company Assets ---");
+            foreach (var asset in _assets)
+            {
+                // The correct GetAssetSummary() override is called here.
+                Console.WriteLine(asset.GetAssetSummary());
+            }
+            Console.WriteLine("--------------------------\n");
+        }
+
+        public void PrintAllMaintenanceDetails()
+        {
+            Console.WriteLine("\n--- Asset Maintenance Schedule ---");
+            foreach (var asset in _assets)
+            {
+                // The correct GetMaintenanceDetails() override is called here.
+                Console.WriteLine($"Asset: {asset.Name} ({asset.AssetId}) -> {asset.GetMaintenanceDetails()}");
+            }
+            Console.WriteLine("----------------------------------\n");
+        }
+
+        /// <summary>
+        /// A method that checks a condition and raises an event.
+        /// </summary>
+        public void CheckAssetsEOL()
+        {
+            Console.WriteLine("--- Checking Assets for End-of-Life (EOL) ---");
+            foreach (var asset in _assets)
+            {
+                // Condition: If asset is older than 3 years.
+                if (asset.PurchaseDate < DateTime.Now.AddYears(-3))
+                {
+                    // Raise the event if there are subscribers.
+                    OnAssetNearingEOL($"Warning: Asset '{asset.Name}' (ID: {asset.AssetId}) has passed its 3-year EOL mark.");
+                }
+            }
+            Console.WriteLine("---------------------------------------------\n");
+        }
+
+        /// <summary>
+        /// Protected virtual method to raise the event. This is a common pattern.
+        /// </summary>
+        protected virtual void OnAssetNearingEOL(string message)
+        {
+            // Check if there are any subscribers to the event before invoking it.
+            AssetNearingEOL?.Invoke(message);
+        }
+    }
+
+
