@@ -246,5 +246,87 @@ namespace AssetManagementSystem
             AssetNearingEOL?.Invoke(message);
         }
     }
+    
+
+    //============================================================
+    // 5. STATIC CLASS & MEMBERS
+    //============================================================
+
+    /// <summary>
+    /// A static class contains only static members and cannot be instantiated.
+    /// It's useful for utility functions.
+    /// </summary>
+    public static class AssetValidator
+    {
+        // A static method to validate an asset's name.
+        public static bool IsValidAssetName(string name)
+        {
+            // Simple validation: name should not be null or whitespace.
+            return !string.IsNullOrWhiteSpace(name);
+        }
+    }
+
+    //============================================================
+    // Main Program Entry Point
+    //============================================================
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Starting Asset Management System...\n");
+
+            // 1. Create an AssetManager instance.
+            var manager = new AssetManager();
+
+            // 2. Subscribe a method to the manager's event.
+            // Now, HandleEolNotification will be called when the event is raised.
+            manager.AssetNearingEOL += HandleEolNotification;
+
+            // 3. Create different types of assets.
+            // One asset is old (purchased in 2020) to trigger the EOL event.
+            var laptop1 = new Laptop("Dev Laptop", new DateTime(2024, 1, 15), "Intel i7", 16);
+            var monitor1 = new Monitor("Main Monitor", new DateTime(2023, 5, 20), 27, "4K");
+            var chair1 = new OfficeChair("Ergo Chair", new DateTime(2024, 2, 10), "Mesh");
+            var oldLaptop = new Laptop("Old HP", new DateTime(2020, 10, 1), "Intel i5", 8);
+
+            // Use the static validation class before adding an asset.
+            if (AssetValidator.IsValidAssetName(laptop1.Name))
+            {
+                manager.AddAsset(laptop1);
+            }
+            manager.AddAsset(monitor1);
+            manager.AddAsset(chair1);
+            manager.AddAsset(oldLaptop);
+
+            Console.WriteLine();
+
+            // 4. Demonstrate Polymorphism by calling methods on the list of assets.
+            manager.PrintAllAssetSummaries();
+            manager.PrintAllMaintenanceDetails();
+
+            // 5. Trigger the condition that raises the event.
+            manager.CheckAssetsEOL();
+
+            // 6. Display the static property value from the base Asset class.
+            Console.WriteLine($"Total number of assets created: {Asset.TotalAssets}");
+
+            Console.WriteLine("\nSystem finished.");
+        }
+
+        /// <summary>
+        /// This is the event handler method. It matches the signature of the AssetNotificationHandler delegate.
+        /// </summary>
+        public static void HandleEolNotification(string message)
+        {
+            // Change console color to highlight the event notification.
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[EVENT RECEIVED] {message}");
+            Console.ResetColor();
+        }
+    }
+}
+
+
 
 
